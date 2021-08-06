@@ -28,6 +28,7 @@
     "build": "cross-env NODE_ENV=production rollup -c",
     "fix": "prettier -c --write --parser=typescript \"src/**/*.ts\"",
     "test": "jest",
+    "prepublishOnly": "yarn build",
     "prepare": "husky install"
   },
   "devDependencies": {
