@@ -1,5 +1,4 @@
-import _set from 'lodash.set'
-import _get from 'lodash.get'
+import { set as _set, get as _get } from 'lodash'
 
 import { __MOUNT_PROPERTY__ } from '../constants'
 

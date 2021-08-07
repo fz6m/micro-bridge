@@ -1,6 +1,7 @@
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
+import replace from '@rollup/plugin-replace'
 
 // https://github.com/TrySound/rollup-plugin-terser
 import { terser } from 'rollup-plugin-terser'
@@ -60,6 +61,10 @@ const configGenerator = (module, index) => ({
           targets: ['./dist', './types'],
         })
       : null,
+    replace({
+      __DEV__: isDev,
+      preventAssignment: true,
+    }),
     module.format === 'umd' ? nodeResolve() : null,
     commonjs(),
     typescript({

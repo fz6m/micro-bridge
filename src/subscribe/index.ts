@@ -1,14 +1,16 @@
 import { getStoreScopeValue, setStoreScopeValue } from '../store/changeStore'
-import { __SUBSCRIBE_SCOPE__, __VALUE_SUBSCRIBE_SCOPE__ } from '../constants'
+import { __ALL_SUBSCRIBE_KEY__ } from '../constants'
 
-export const getSubscribes = <T extends unknown = any>(
+export type CommonFunc = (...args: any[]) => any
+
+export const getSubscribes = <T extends CommonFunc = CommonFunc>(
   key: string,
   scope: string
 ) => {
   return getStoreScopeValue<T[]>(key, scope) || []
 }
 
-export const addSubscribe = <T extends unknown = any>(
+export const addSubscribe = <T extends CommonFunc = CommonFunc>(
   key: string,
   callback: T,
   scope: string
@@ -21,11 +23,18 @@ export const addSubscribe = <T extends unknown = any>(
   setStoreScopeValue(key, newSubscribeList, scope)
 }
 
+export const addSubscribeToAll = <T extends CommonFunc = CommonFunc>(
+  callback: T,
+  scope: string
+) => {
+  addSubscribe(__ALL_SUBSCRIBE_KEY__, callback, scope)
+}
+
 export const destorySubscribes = (key: string, scope: string) => {
   setStoreScopeValue(key, [], scope)
 }
 
-export const deleteSubscribe = <T extends unknown = any>(
+export const deleteSubscribe = <T extends CommonFunc = CommonFunc>(
   key: string,
   callback: T,
   scope: string
@@ -53,14 +62,27 @@ export const dispacthSubscribes = (
   })
 }
 
-export const getSubscribeBase = <T extends unknown = any>(scope: string) => {
+export const dispacthAllSubscribes = (scope: string, ...args: any[]) => {
+  const allSubs = getSubscribes(__ALL_SUBSCRIBE_KEY__, scope)
+  allSubs.forEach((func) => {
+    try {
+      func(...args)
+    } catch {}
+  })
+}
+
+export const getSubscribeBase = <T extends CommonFunc = CommonFunc>(
+  scope: string
+) => {
   return {
     get: (key: string) => getSubscribes<T>(key, scope),
     add: (key: string, callback: T) => addSubscribe<T>(key, callback, scope),
+    addToAll: (callback: T) => addSubscribeToAll<T>(callback, scope),
     destory: (key: string) => destorySubscribes(key, scope),
     delete: (key: string, callback: T) =>
       deleteSubscribe<T>(key, callback, scope),
     dispacth: (key: string, ...args: any[]) =>
       dispacthSubscribes(key, scope, ...args),
+    dispatchAll: (...args: any[]) => dispacthAllSubscribes(scope, ...args),
   }
 }

@@ -5,6 +5,7 @@ module.exports = {
       {
         modules: false,
       },
-    ]
+    ],
   ],
+  plugins: [['babel-plugin-lodash']],
 }

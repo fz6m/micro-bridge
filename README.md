@@ -1,6 +1,6 @@
 # micro-bridge
 
-一个在微前端多应用内互相通信的 store ，支持值分类管理、动态监听、事件总线。
+一个微前端多应用间通信的全局状态管理，支持值分类管理、动态监听、事件总线
 
 ### Install
 
@@ -15,7 +15,7 @@
 ```html
 <body>
   <!-- ... -->
-  <script src="https://cdn.jsdelivr.net/gh/fz6m/micro-bridge@1.0/dist/micro-bridge.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/fz6m/micro-bridge@1.1/dist/micro-bridge.min.js"></script>
   <script>
     MicroBridge.Store.set('key', 'value')
   </script>
@@ -58,6 +58,8 @@ Store.getWithScope<Record<string, any>>('key', 'some-scope')
 |     `Store.get`      | 获取值                     |
 | `Store.setWithScope` | 带标识符设定值（方便管理） |
 | `Store.getWithScope` | 带标识符获取值             |
+|   `Store.getScope`   | 获取标识符下所有数据对象   |
+|   `Store.setScope`   | 设定标识符下整个数据对象   |
 |   `Store.getStore`   | 获取全部数据               |
 
 #### StoreChange
@@ -69,6 +71,9 @@ Store.getWithScope<Record<string, any>>('key', 'some-scope')
 ```ts
 import { StoreChange } from 'micro-bridge'
 
+StoreChange.$on((newStore) => {
+  // ...
+})
 StoreChange.$on('path.key', (newValue, oldValue) => {
   // ...
 })
@@ -105,7 +110,6 @@ StoreBus.$on('some-event', (value) => {
 |  `StoreBus.$emit`  | 事件广播                   |
 | `StoreBus.$delete` | 移除某个正在监听的函数     |
 |  `StoreBus.$off`   | 清空某个事件的所有监听函数 |
-
 
 ### Other
 

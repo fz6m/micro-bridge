@@ -6,7 +6,7 @@ export type EventBusCallback = (value?: any) => any
 export const SubBaseForEventBus =
   getSubscribeBase<EventBusCallback>(__SUBSCRIBE_SCOPE__)
 
-export const dispacthEvents = (key: string, value: any) => {
+export const dispacthEvents = (key: string, value?: any) => {
   SubBaseForEventBus.dispacth(key, value)
 }
 

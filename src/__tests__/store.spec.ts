@@ -1,4 +1,5 @@
-import { Store } from '../../dist/micro-birdge'
+import { Store } from '../../dist/micro-bridge'
+import { getScope } from '../store/scope'
 
 describe('Test Store', () => {
   it('get/set', () => {
@@ -20,5 +21,31 @@ describe('Test Store', () => {
     const [key, value] = ['a.b.c', 123]
     Store.setWithScope(key, value, scope)
     expect(Store.getWithScope(key, scope)).toBe(value)
+  })
+
+  it('scope object get/set', () => {
+    const scopeKey = 's'
+    expect(Store.getScope(scopeKey)).toEqual({})
+
+    const key = 'c'
+    const value = 'abc'
+    Store.setWithScope(key, value, scopeKey)
+    Store.setWithScope(value, key, scopeKey)
+
+    expect(Store.getScope(scopeKey)).toEqual({
+      [key]: value,
+      [value]: key,
+    })
+
+    Store.setScope(
+      {
+        [key]: value,
+      },
+      scopeKey
+    )
+
+    expect(Store.getScope(scopeKey)).toEqual({
+      [key]: value,
+    })
   })
 })

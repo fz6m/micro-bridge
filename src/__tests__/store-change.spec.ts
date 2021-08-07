@@ -1,4 +1,10 @@
-import { StoreChange, Store } from '../../dist/micro-birdge'
+import { StoreChange, Store } from '../../dist/micro-bridge'
+import { __VALUE_SUBSCRIBE_SCOPE__, __MOUNT_PROPERTY__ } from '../constants'
+import { getScope } from '../store/scope'
+
+beforeEach(() => {
+  window[__MOUNT_PROPERTY__] = {}
+})
 
 describe('Test Store Change', () => {
   it('on/delete/destory', () => {
@@ -6,9 +12,9 @@ describe('Test Store Change', () => {
     const onChange = (newValue: any, oldValue: any) => {}
     StoreChange.$on(key, onChange)
 
+    const store = window[__MOUNT_PROPERTY__]
+    const subObj = store[getScope(__VALUE_SUBSCRIBE_SCOPE__)]
     // add one func
-    const store = Store.getStore()
-    const subObj = store[`_$value_subscribe`]
     let arr = subObj[key]
     expect(arr.length).toBe(1)
 
@@ -46,5 +52,41 @@ describe('Test Store Change', () => {
     StoreChange.$destory(key)
     arr = subObj[key]
     expect(arr.length).toBe(0)
+  })
+
+  it('hide internal key', () => {
+    const key = 'a'
+    StoreChange.$on(key, () => {})
+
+    const publickStore = Store.getStore()
+    const store = window[__MOUNT_PROPERTY__]
+    const subObj = store[getScope(__VALUE_SUBSCRIBE_SCOPE__)]
+
+    expect(publickStore).toEqual({})
+    expect(subObj[key].length).toBe(1)
+  })
+
+  it('monitor all value change', () => {
+    let expectValue = null
+    let calledCounts = 0
+    const onChange = (newStore: any) => {
+      calledCounts++
+      expectValue = newStore
+    }
+
+    expect(Store.getStore()).toEqual({})
+
+    StoreChange.$on(onChange)
+
+    // change value
+    const key = 'a'
+    const value = 123
+    Store.set(key, value)
+    Store.set(key, value)
+    expect(expectValue).toEqual({
+      [key]: value,
+    })
+    // not repeat call
+    expect(calledCounts).toBe(1)
   })
 })

@@ -1,4 +1,6 @@
-import { StoreBus, Store } from '../../dist/micro-birdge'
+import { StoreBus, Store } from '../../dist/micro-bridge'
+import { __SUBSCRIBE_SCOPE__, __MOUNT_PROPERTY__ } from '../constants'
+import { getScope } from '../store/scope'
 
 describe('Test Store Bus', () => {
   it('on/off/emit/delete', () => {
@@ -7,8 +9,8 @@ describe('Test Store Bus', () => {
     StoreBus.$on(key, onChange)
 
     // add one func
-    const store = Store.getStore()
-    const subObj = store[`_$subscribe`]
+    const store = window[__MOUNT_PROPERTY__]
+    const subObj = store[getScope(__SUBSCRIBE_SCOPE__)]
     let arr = subObj[key]
     expect(arr.length).toBe(1)
 
