@@ -30,7 +30,8 @@
     "fix": "prettier -c --write --parser=typescript \"src/**/*.ts\"",
     "test": "jest",
     "prepublishOnly": "yarn build",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "push": "yarn publish --registry=https://registry.yarnpkg.com"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
